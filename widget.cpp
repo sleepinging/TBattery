@@ -19,7 +19,7 @@ Widget::Widget(QWidget *parent) :
     timer_->setInterval(1000);
     //重复检测电量
     connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
-    //插拔电池的时候更新
+    //插拔电源的时候更新
     connect(btevt_,&BatteryEvent::PowerChanged,this,&Widget::updatebtshow);
     //双击显示
     connect(sti_,&QSystemTrayIcon::activated,this,&Widget::onactivetray);
