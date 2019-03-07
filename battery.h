@@ -1,6 +1,8 @@
 #if !defined(__H__BATTERY__H__)
 #define __H__BATTERY__H__
 
+#include <QMutex>
+
 class Battery
 {
 public:
@@ -20,6 +22,8 @@ public:
 public:
     //成功返回非0
     static int Update();
+private:
+    static QMutex *mtx_;
 };
 
 #endif // __H__BATTERY__H__
