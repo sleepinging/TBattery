@@ -1,5 +1,5 @@
 # TBattery
-Win10任务栏显示电量
+Win10系统托盘显示电量
 
 ![使用电池](https://github.com/sleepinging/TBattery/blob/master/%E7%94%B5%E6%B1%A0.png)
 
