@@ -6,7 +6,8 @@
 class Battery
 {
 public:
-    enum class Status{
+    enum class Status:unsigned char
+    {
         CHARGING=1,
         UNCHARGING=0,
         UNKNOW=255

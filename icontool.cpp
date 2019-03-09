@@ -3,18 +3,22 @@
 #include <QPainter>
 #include <QString>
 
+std::unordered_map<int,QIcon> IconTool::ico_map;
+
 IconTool::IconTool()
 {
 
 }
 
-QIcon IconTool::GenIcon(int num, const QColor &bk)
+QIcon IconTool::GenIcon(int num, bool charging)
 {
     //字体颜色
     QColor fc=Qt::black;
 
-    QSize size(50,50); //指定图片大小;
-    QImage image(size,QImage::Format_ARGB32);
+    QColor bk=charging?qRgba(0xaf,0xff,0xaf,250):qRgba(0xff,0xff,0xff,250);
+
+    static QSize size(32,32); //指定图片大小;
+    static QImage image(size,QImage::Format_ARGB32);
     //以ARGB32格式构造一个QImage
     image.fill(bk);//填充图片背景,120/250为透明度
     QPainter painter(&image); //为这个QImage构造一个QPainter
@@ -27,12 +31,15 @@ QIcon IconTool::GenIcon(int num, const QColor &bk)
     pen.setColor(fc);
     QFont font = painter.font();
     font.setBold(true);//加粗
-    font.setPixelSize(50);//改变字体大小
+    font.setPixelSize(32);//改变字体大小
 
     painter.setPen(pen);
     painter.setFont(font);
     painter.drawText(image.rect(),Qt::AlignCenter,QString::number(num));
 
-    QPixmap qp=QPixmap::fromImage(image);
-    return qp;
+    static QPixmap qp;
+    qp=QPixmap::fromImage(image);
+    static QIcon ic;
+    ic=qp;
+    return ic;
 }

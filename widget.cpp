@@ -48,25 +48,25 @@ void Widget::showbtinfo()
     auto bp=Battery::percent;
     ui->lb_bp->setText(QString::number(bp));
     QString st;
-    QColor bk;
+//    QColor bk;
     switch(Battery::status){
     case Battery::Status::UNCHARGING:
         st="使用电池";
-        bk=qRgba(0xff,0xff,0xff,250);
+//        bk=qRgba(0xff,0xff,0xff,250);
         break;
     case Battery::Status::CHARGING:
         st="正在充电";
-        bk=qRgba(0xaf,0xff,0xaf,250);
+//        bk=qRgba(0xaf,0xff,0xaf,250);
         break;
     case Battery::Status::UNKNOW:
         st="未知";
-        bk=qRgba(0xaf,0xaf,0xaf,250);
+//        bk=qRgba(0xaf,0xaf,0xaf,250);
         break;
     }
     ui->lb_st->setText(st);
     st+="\n"+QString::number(bp)+"%";
     sti_->setToolTip(st);
-    sti_->setIcon(IconTool::GenIcon(bp,bk));
+    sti_->setIcon(IconTool::GenIcon(bp,Battery::status==Battery::Status::CHARGING));
 }
 
 void Widget::closeEvent(QCloseEvent *)
