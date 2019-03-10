@@ -4,6 +4,7 @@
 #include <QString>
 
 std::unordered_map<int,QIcon> IconTool::ico_map;
+QMutex IconTool::mtx_;
 
 IconTool::IconTool()
 {
@@ -11,6 +12,23 @@ IconTool::IconTool()
 }
 
 QIcon IconTool::GenIcon(int num, bool charging)
+{
+//    return genIcon(num,charging);
+    int key=(num<<16)+charging;
+    QIcon ico;
+    mtx_.lock();
+    auto itm=ico_map.find(key);
+    if(itm!=ico_map.end()){//在缓存里面
+        ico= itm->second;
+    }else{//不在缓存
+        ico=genIcon(num,charging);
+        ico_map[key]=ico;
+    }
+    mtx_.unlock();
+    return ico;
+}
+
+QIcon IconTool::genIcon(int num, bool charging)
 {
     //字体颜色
     QColor fc=Qt::black;

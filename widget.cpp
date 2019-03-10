@@ -16,7 +16,7 @@ Widget::Widget(QWidget *parent) :
     btevt_=new BatteryEvent();
     sti_=new QSystemTrayIcon();
     timer_=new QTimer();
-    timer_->setInterval(1000);
+    timer_->setInterval(100);
     //重复检测电量
     connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
     //插拔电源的时候更新
@@ -48,19 +48,15 @@ void Widget::showbtinfo()
     auto bp=Battery::percent;
     ui->lb_bp->setText(QString::number(bp));
     QString st;
-//    QColor bk;
     switch(Battery::status){
     case Battery::Status::UNCHARGING:
         st="使用电池";
-//        bk=qRgba(0xff,0xff,0xff,250);
         break;
     case Battery::Status::CHARGING:
         st="正在充电";
-//        bk=qRgba(0xaf,0xff,0xaf,250);
         break;
     case Battery::Status::UNKNOW:
         st="未知";
-//        bk=qRgba(0xaf,0xaf,0xaf,250);
         break;
     }
     ui->lb_st->setText(st);
