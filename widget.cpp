@@ -16,7 +16,7 @@ Widget::Widget(QWidget *parent) :
     btevt_=new BatteryEvent();
     sti_=new QSystemTrayIcon();
     timer_=new QTimer();
-    timer_->setInterval(100);
+    timer_->setInterval(1000);
     //重复检测电量
     connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
     //插拔电源的时候更新
