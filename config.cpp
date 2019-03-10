@@ -5,6 +5,8 @@
 #include <vector>
 #include <algorithm>
 
+#include <QString>
+
 #include "mystring.h"
 #include "tfile.h"
 
@@ -33,6 +35,17 @@ bool Config::LoadFromString(const std::string &str)
     return true;
 }
 
+static string Color2Str(const QColor& c){
+    return "";
+}
+
+static QColor Str2Color(const string& c){
+    auto v=QString(c.c_str()).toUInt(nullptr,16);
+    QColor cl=qRgba(v&0xff000000>>24,v&0x00ff0000>>16,v&0x0000ff00>>8,
+                         v&0x000000ff);
+    return cl;
+}
+
 //处理一行,返回false停止
 bool Config::handleline(const std::string &line){
     string key, value;
@@ -53,27 +66,27 @@ bool Config::handleline(const std::string &line){
 
     //跳过注释
     if (
-        key[0] == '#' ||
-        key[0] == ';' ||
-        key[0] == '\'' ||
-        (key[0] == '/' && key[1] == '/')
-    )
+            key[0] == '#' ||
+            key[0] == ';' ||
+            key[0] == '\'' ||
+            (key[0] == '/' && key[1] == '/')
+            )
     {
         return true;
     }
 
     // cout << "key:" << key << ",value:" << value << endl;
 
-    // if (key == "deviceid")
-    // {
-    //     deviceId = std::move(value);
-    //     return true;
-    // }
-    // else if (key == "listenport")
-    // {
-    //     ListenPort = mytrans<string, int>(std::move(value));
-    //     return true;
-    // }
+    if (key == "back_color_charging")
+    {
+        color_charging=Str2Color(value);
+        return true;
+    }
+    else if (key == "back_color_using")
+    {
+        color_us_bt=Str2Color(value);
+        return true;
+    }
 
     else if (key == "end")
     {
@@ -139,6 +152,18 @@ Config* Config::GetInstance(){
         throw "you must init config first!";
     }
     return is_;
+}
+
+#include <QDebug>
+
+int Config::Save(const string &cf)
+{
+    ofstream of(cf);
+
+    of<<"back_color_using="<<Color2Str(is_->color_us_bt) <<"\n";
+    of<<"back_color_charging="<<Color2Str(is_->color_charging) <<"\n";
+
+    return true;
 }
 
 int Config::CleanUp(){

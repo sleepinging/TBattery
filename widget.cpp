@@ -158,6 +158,7 @@ void Widget::on_btn_scbc_clicked()
     QColorDialog cd;
     auto cl=cd.getColor();
     Config::GetInstance()->color_charging=cl;
+    Config::Save("config.ini");
     IconTool::ClearCache();
 }
 
@@ -167,5 +168,6 @@ void Widget::on_btn_subc_clicked()
     QColorDialog cd;
     auto cl=cd.getColor();
     Config::GetInstance()->color_us_bt=cl;
+    Config::Save("config.ini");
     IconTool::ClearCache();
 }
