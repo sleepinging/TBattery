@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QCloseEvent>
+#include <QMessageBox>
 
 #include "battery.h"
 #include "batteryevent.h"
@@ -102,9 +103,19 @@ void Widget::showmain()
     }
 }
 
-void Widget::closeEvent(QCloseEvent *)
+void Widget::closeEvent(QCloseEvent *e)
 {
-    //    event->ignore();
+    auto r=QMessageBox::information(this,"提示","是否退出?",QMessageBox::Yes | QMessageBox::Cancel);
+    switch(r){
+    case QMessageBox::Yes:
+        e->accept();
+        break;
+    case QMessageBox::Cancel:
+        e->ignore();
+        break;
+    default:
+        QWidget::closeEvent(e);
+    }
 }
 
 void Widget::changeEvent(QEvent *event)
