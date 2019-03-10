@@ -29,13 +29,19 @@ SOURCES += \
         widget.cpp \
     battery.cpp \
     batteryevent.cpp \
-    icontool.cpp
+    icontool.cpp \
+    config.cpp \
+    mystring.cpp \
+    tfile.cpp
 
 HEADERS += \
         widget.h \
     battery.h \
     batteryevent.h \
-    icontool.h
+    icontool.h \
+    config.h \
+    mystring.h \
+    tfile.h
 
 FORMS += \
         widget.ui
