@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QCloseEvent>
 #include <QMessageBox>
-#include <QColorDialog>
 
 #include "battery.h"
 #include "batteryevent.h"
@@ -20,6 +19,8 @@ Widget::Widget(QWidget *parent) :
     btevt_=new BatteryEvent();
     timer_=new QTimer();
     menu_=new QMenu();
+    cld_c_=new QColorDialog();
+    cld_b_=new QColorDialog();
 
     //初始化托盘
     inittray();
@@ -28,6 +29,9 @@ Widget::Widget(QWidget *parent) :
     connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
     //插拔电源的时候更新
     connect(btevt_,&BatteryEvent::PowerChanged,this,&Widget::updatebtshow);
+    //选择颜色
+    connect(cld_c_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_c);
+    connect(cld_b_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_b);
 
     timer_->setInterval(1000);
     timer_->start();
@@ -42,6 +46,10 @@ Widget::~Widget()
     timer_=nullptr;
     delete menu_;
     menu_=nullptr;
+    delete cld_c_;
+    cld_c_=nullptr;
+    delete cld_b_;
+    cld_b_=nullptr;
 }
 
 void Widget::updatebtshow()
@@ -152,29 +160,34 @@ void Widget::onactivetray(QSystemTrayIcon::ActivationReason reason)
     }
 }
 
+void Widget::selected_bkc_c(const QColor &color)
+{
+    auto cf=Config::GetInstance();
+    cf->color_charging=color.rgba();
+    cf->Save("config.ini");
+    IconTool::ClearCache();
+}
+
+void Widget::selected_bkc_b(const QColor &color)
+{
+    auto cf=Config::GetInstance();
+    cf->color_us_bt=color.rgba();
+    cf->Save("config.ini");
+    IconTool::ClearCache();
+}
+
 //充电背景色
 void Widget::on_btn_scbc_clicked()
 {
     auto cf=Config::GetInstance();
-    auto cd=new QColorDialog(cf->color_charging,this);
-    connect(cd,&QColorDialog::colorSelected,[=](const QColor &color){
-        qDebug()<<"充电背景色";
-        cf->color_charging=color.rgba();
-        cf->Save("config.ini");
-        IconTool::ClearCache();
-    });
-    cd->show();
+    cld_c_->setCurrentColor(cf->color_charging);
+    cld_c_->show();
 }
 
 //使用电池的背景色
 void Widget::on_btn_subc_clicked()
 {
     auto cf=Config::GetInstance();
-    auto cd=new QColorDialog(cf->color_us_bt,this);
-    connect(cd,&QColorDialog::colorSelected,[=](const QColor &color){
-        cf->color_us_bt=color.rgba();
-        cf->Save("config.ini");
-        IconTool::ClearCache();
-    });
-    cd->show();
+    cld_b_->setCurrentColor(cf->color_us_bt);
+    cld_b_->show();
 }
