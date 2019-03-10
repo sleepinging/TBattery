@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QString>
 
+#include "config.h"
+
 std::unordered_map<int,QIcon> IconTool::ico_map;
 QMutex IconTool::mtx_;
 
@@ -33,7 +35,9 @@ QIcon IconTool::genIcon(int num, bool charging)
     //字体颜色
     QColor fc=Qt::black;
 
-    QColor bk=charging?qRgba(0xaf,0xff,0xaf,250):qRgba(0xff,0xff,0xff,250);
+    QColor bk=charging?
+        Config::GetInstance()->color_charging:
+        Config::GetInstance()->color_us_bt;
 
     static QSize size(32,32); //指定图片大小;
     static QImage image(size,QImage::Format_ARGB32);

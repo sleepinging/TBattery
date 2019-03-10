@@ -6,12 +6,14 @@
  * @LastEditTime: 2019-01-17 17:39:03
  */
 
-#if !defined(__H__CONFIG__H__)
-#define __H__CONFIG__H__
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include <QColor>
 
 //调试消息等级
 namespace INFOLEVEL
@@ -40,7 +42,16 @@ class Config
 
     static Config *GetInstance();
 
+    //保存
+    static int Save(const std::string &cf = "config.ini");
+
   public:
+
+    //充电颜色
+    QColor color_charging=qRgba(0xaf,0xff,0xaf,250);
+
+    //使用电池的颜色
+    QColor color_us_bt=qRgba(0xff,0xff,0xff,250);
 
     //其它配置项,key都会变成小写
     std::unordered_map<std::string, std::string> kvmap;
@@ -55,4 +66,4 @@ class Config
     static int CleanUp();
 };
 
-#endif // __H__CONFIG__H__
+#endif // CONFIG_H

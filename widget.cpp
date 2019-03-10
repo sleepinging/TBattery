@@ -13,18 +13,20 @@ Widget::Widget(QWidget *parent) :
     ui(new Ui::Widget)
 {
     ui->setupUi(this);
+
     btevt_=new BatteryEvent();
-    sti_=new QSystemTrayIcon();
     timer_=new QTimer();
-    timer_->setInterval(1000);
+    menu_=new QMenu();
+
+    //初始化托盘
+    inittray();
+
     //重复检测电量
     connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
     //插拔电源的时候更新
     connect(btevt_,&BatteryEvent::PowerChanged,this,&Widget::updatebtshow);
-    //双击显示
-    connect(sti_,&QSystemTrayIcon::activated,this,&Widget::onactivetray);
-    //在系统托盘显示
-    sti_->show();
+
+    timer_->setInterval(1000);
     timer_->start();
 }
 
@@ -35,6 +37,8 @@ Widget::~Widget()
     sti_=nullptr;
     delete timer_;
     timer_=nullptr;
+    delete menu_;
+    menu_=nullptr;
 }
 
 void Widget::updatebtshow()
@@ -65,6 +69,39 @@ void Widget::showbtinfo()
     sti_->setIcon(IconTool::GenIcon(bp,Battery::status==Battery::Status::CHARGING));
 }
 
+void Widget::inittray()
+{
+    sti_=new QSystemTrayIcon();
+    //双击显示
+    connect(sti_,&QSystemTrayIcon::activated,this,&Widget::onactivetray);
+    //右键菜单
+
+    //在系统托盘显示
+    sti_->show();
+
+    auto act1 = new QAction(menu_);
+    auto act2 = new QAction(menu_);
+
+    act1->setText("显示");
+    act2->setText("退出");
+
+    menu_->addAction(act1);
+    menu_->addAction(act2);
+
+    connect(act1, &QAction::triggered, this, &Widget::showmain);
+    connect(act2, &QAction::triggered, this, &Widget::close);
+
+    sti_->setContextMenu(menu_);
+}
+
+void Widget::showmain()
+{
+    show();
+    if(this->isMinimized()){
+        this->showNormal();
+    }
+}
+
 void Widget::closeEvent(QCloseEvent *)
 {
     //    event->ignore();
@@ -91,10 +128,7 @@ void Widget::onactivetray(QSystemTrayIcon::ActivationReason reason)
     case QSystemTrayIcon::DoubleClick:
     {
         if(this->isHidden()){
-            show();
-            if(this->isMinimized()){
-                this->showNormal();
-            }
+            showmain();
         }else{
             this->hide();
         }

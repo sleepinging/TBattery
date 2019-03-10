@@ -106,8 +106,8 @@ bool Config::Init(const std::string &cf,bool show)
     auto cfg = new Config();
     string str;
 
-        //可以不存在，返回空
-        str = TFile::ReadAllString(cf);
+    //可以不存在，返回空
+    str = TFile::ReadAllString(cf);
 
     //显示内容
     if (show)
