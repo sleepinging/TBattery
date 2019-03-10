@@ -35,15 +35,12 @@ bool Config::LoadFromString(const std::string &str)
     return true;
 }
 
-static string Color2Str(const QColor& c){
-    return "";
+static string Color2Str(const QRgb& c){
+    return QString::number(c,16).toStdString();
 }
 
-static QColor Str2Color(const string& c){
-    auto v=QString(c.c_str()).toUInt(nullptr,16);
-    QColor cl=qRgba(v&0xff000000>>24,v&0x00ff0000>>16,v&0x0000ff00>>8,
-                         v&0x000000ff);
-    return cl;
+static QRgb Str2Color(const string& c){
+    return QString(c.c_str()).toUInt(nullptr,16);
 }
 
 //处理一行,返回false停止
@@ -113,7 +110,7 @@ bool Config::check()
     return true;
 }
 
-//初始化,可以是文件或者http地址
+//初始化
 bool Config::Init(const std::string &cf,bool show)
 {
     auto cfg = new Config();
@@ -153,8 +150,6 @@ Config* Config::GetInstance(){
     }
     return is_;
 }
-
-#include <QDebug>
 
 int Config::Save(const string &cf)
 {

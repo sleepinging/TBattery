@@ -13,7 +13,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include <QColor>
+//#include <QColor>
+#include <QRgb>
 
 //调试消息等级
 namespace INFOLEVEL
@@ -37,7 +38,7 @@ class Config
     bool handleline(const std::string &line);
 
   public:
-    //初始化,可以是文件或者http地址
+    //初始化
     static bool Init(const std::string &cf = "config.ini", bool show=false);
 
     static Config *GetInstance();
@@ -48,10 +49,10 @@ class Config
   public:
 
     //充电颜色
-    QColor color_charging=qRgba(0xaf,0xff,0xaf,250);
+    QRgb color_charging=qRgba(0xaf,0xff,0xaf,250);
 
     //使用电池的颜色
-    QColor color_us_bt=qRgba(0xff,0xff,0xff,250);
+    QRgb color_us_bt=qRgba(0xff,0xff,0xff,250);
 
     //其它配置项,key都会变成小写
     std::unordered_map<std::string, std::string> kvmap;

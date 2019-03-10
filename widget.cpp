@@ -155,19 +155,26 @@ void Widget::onactivetray(QSystemTrayIcon::ActivationReason reason)
 //充电背景色
 void Widget::on_btn_scbc_clicked()
 {
-    QColorDialog cd;
-    auto cl=cd.getColor();
-    Config::GetInstance()->color_charging=cl;
-    Config::Save("config.ini");
-    IconTool::ClearCache();
+    auto cf=Config::GetInstance();
+    auto cd=new QColorDialog(cf->color_charging,this);
+    connect(cd,&QColorDialog::colorSelected,[=](const QColor &color){
+        qDebug()<<"充电背景色";
+        cf->color_charging=color.rgba();
+        cf->Save("config.ini");
+        IconTool::ClearCache();
+    });
+    cd->show();
 }
 
 //使用电池的背景色
 void Widget::on_btn_subc_clicked()
 {
-    QColorDialog cd;
-    auto cl=cd.getColor();
-    Config::GetInstance()->color_us_bt=cl;
-    Config::Save("config.ini");
-    IconTool::ClearCache();
+    auto cf=Config::GetInstance();
+    auto cd=new QColorDialog(cf->color_us_bt,this);
+    connect(cd,&QColorDialog::colorSelected,[=](const QColor &color){
+        cf->color_us_bt=color.rgba();
+        cf->Save("config.ini");
+        IconTool::ClearCache();
+    });
+    cd->show();
 }
