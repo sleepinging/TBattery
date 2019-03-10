@@ -22,6 +22,11 @@ public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget() override;
 
+private slots:
+    void on_btn_scbc_clicked();
+
+    void on_btn_subc_clicked();
+
 private:
     void updatebtshow();
     void showbtinfo();

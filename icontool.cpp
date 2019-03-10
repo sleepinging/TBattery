@@ -30,6 +30,13 @@ QIcon IconTool::GenIcon(int num, bool charging)
     return ico;
 }
 
+void IconTool::ClearCache()
+{
+    mtx_.lock();
+    ico_map.clear();
+    mtx_.unlock();
+}
+
 QIcon IconTool::genIcon(int num, bool charging)
 {
     //字体颜色

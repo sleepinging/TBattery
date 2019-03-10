@@ -4,10 +4,12 @@
 #include <QDebug>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QColorDialog>
 
 #include "battery.h"
 #include "batteryevent.h"
 #include "icontool.h"
+#include "config.h"
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -75,11 +77,8 @@ void Widget::inittray()
     sti_=new QSystemTrayIcon();
     //双击显示
     connect(sti_,&QSystemTrayIcon::activated,this,&Widget::onactivetray);
+
     //右键菜单
-
-    //在系统托盘显示
-    sti_->show();
-
     auto act1 = new QAction(menu_);
     auto act2 = new QAction(menu_);
 
@@ -93,6 +92,9 @@ void Widget::inittray()
     connect(act2, &QAction::triggered, this, &Widget::close);
 
     sti_->setContextMenu(menu_);
+
+    //在系统托盘显示
+    sti_->show();
 }
 
 void Widget::showmain()
@@ -148,4 +150,22 @@ void Widget::onactivetray(QSystemTrayIcon::ActivationReason reason)
     default:
         break;
     }
+}
+
+//充电背景色
+void Widget::on_btn_scbc_clicked()
+{
+    QColorDialog cd;
+    auto cl=cd.getColor();
+    Config::GetInstance()->color_charging=cl;
+    IconTool::ClearCache();
+}
+
+//使用电池的背景色
+void Widget::on_btn_subc_clicked()
+{
+    QColorDialog cd;
+    auto cl=cd.getColor();
+    Config::GetInstance()->color_us_bt=cl;
+    IconTool::ClearCache();
 }

@@ -12,6 +12,8 @@ public:
     IconTool();
     //从缓存获取图片
     static QIcon GenIcon(int num,bool charging=false);
+    //清除缓存
+    static void ClearCache();
 private:
     //生成图片
     static QIcon genIcon(int num,bool charging);
