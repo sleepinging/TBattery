@@ -6,6 +6,7 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <QMenu>
+#include <QColorDialog>
 
 class BatteryEvent;
 
@@ -42,12 +43,22 @@ private:
 
     void onactivetray(QSystemTrayIcon::ActivationReason reason);
 
+    //选择完毕充电背景色
+    void selected_bkc_c(const QColor &color);
+
+    //选择完毕电池背景色
+    void selected_bkc_b(const QColor &color);
+
 private:
     Ui::Widget *ui;
     QSystemTrayIcon *sti_=nullptr;
     QTimer * timer_=nullptr;
     //右键菜单
     QMenu* menu_=nullptr;
+    //充电背景颜色选择
+    QColorDialog* cld_c_=nullptr;
+    //电池背景颜色选择
+    QColorDialog* cld_b_=nullptr;
 };
 
 #endif // WIDGET_H
