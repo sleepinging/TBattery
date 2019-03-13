@@ -122,6 +122,11 @@ void Widget::init_bt_rec()
     timer_save_record_->setInterval(1000*60);
     timer_save_record_->start();
     Widget::save_record();
+
+    auto recs=BatteryRecord::GetInstance()->GetRecords(1552489876,1552489996);
+    for(const auto& p:recs){
+        qDebug()<<"time:"<<p.first<<" per:"<<p.second;
+    }
 }
 
 void Widget::showmain()

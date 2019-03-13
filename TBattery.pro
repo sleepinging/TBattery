@@ -33,7 +33,6 @@ SOURCES += \
     config.cpp \
     mystring.cpp \
     tfile.cpp \
-    sqltool.cpp \
     batteryrecord.cpp
 
 HEADERS += \
@@ -44,7 +43,6 @@ HEADERS += \
     config.h \
     mystring.h \
     tfile.h \
-    sqltool.h \
     batteryrecord.h
 
 FORMS += \
