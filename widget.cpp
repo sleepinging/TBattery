@@ -9,6 +9,7 @@
 #include "batteryevent.h"
 #include "icontool.h"
 #include "config.h"
+#include "batteryrecord.h"
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -35,6 +36,9 @@ Widget::Widget(QWidget *parent) :
 
     timer_->setInterval(1000);
     timer_->start();
+    updatebtshow();
+
+    init_bt_rec();
 }
 
 Widget::~Widget()
@@ -50,6 +54,8 @@ Widget::~Widget()
     cld_c_=nullptr;
     delete cld_b_;
     cld_b_=nullptr;
+    delete timer_save_record_;
+    timer_save_record_=nullptr;
 }
 
 void Widget::updatebtshow()
@@ -103,6 +109,19 @@ void Widget::inittray()
 
     //在系统托盘显示
     sti_->show();
+}
+
+void Widget::init_bt_rec()
+{
+    BatteryRecord::Init();
+
+    timer_save_record_=new QTimer();
+    //保存电量记录
+    connect(timer_save_record_,&QTimer::timeout,this,&Widget::save_record);
+
+    timer_save_record_->setInterval(1000*60);
+    timer_save_record_->start();
+    Widget::save_record();
 }
 
 void Widget::showmain()
@@ -174,6 +193,11 @@ void Widget::selected_bkc_b(const QColor &color)
     cf->color_us_bt=color.rgba();
     cf->Save("config.ini");
     IconTool::ClearCache();
+}
+
+void Widget::save_record()
+{
+    BatteryRecord::GetInstance()->AddRecord(time(nullptr),Battery::percent);
 }
 
 //充电背景色
