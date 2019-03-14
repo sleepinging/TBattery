@@ -18,7 +18,7 @@ BatteryRecord::BatteryRecord(const char *dbname)
     }
     qry_=new QSqlQuery(db_);
     //创建table
-    qry_->prepare("CREATE TABLE IF NOT EXISTS record ( time DATETIME PRIMARY KEY UNIQUE NOT NULL, percent INTEGER NOT NULL);");
+    qry_->prepare("CREATE TABLE IF NOT EXISTS record ( time DATETIME PRIMARY KEY UNIQUE NOT NULL, percent INTEGER NOT NULL, status INTEGER NOT NULL);");
     if(!qry_->exec()){
         qDebug() << qry_->lastError();
         throw "create table failed";
@@ -32,9 +32,10 @@ BatteryRecord::~BatteryRecord()
     qry_=nullptr;
 }
 
-int BatteryRecord::AddRecord(time_t t, int percent)
+int BatteryRecord::AddRecord(time_t t, int percent,bool charging)
 {
-    auto sql="INSERT INTO record (time, percent) VALUES ('"+QString::number(t)+"','"+QString::number(percent)+"')";
+    auto sql=QString("INSERT INTO record (time, percent,status) VALUES ('%1',%2,%3)");
+    sql=sql.arg(t).arg(percent).arg(charging?1:0);
 //    qDebug()<<sql;
     qry_->prepare(sql);
     if(!qry_->exec()){
@@ -44,11 +45,12 @@ int BatteryRecord::AddRecord(time_t t, int percent)
     return 0;
 }
 
-std::vector<std::pair<time_t, unsigned char> > BatteryRecord::GetRecords(time_t start, time_t end)
+std::vector<std::tuple<time_t, unsigned char, bool> > BatteryRecord::GetRecords(time_t start, time_t end)
 {
-    std::vector<std::pair<time_t, unsigned char>> recs;
-    qry_->prepare("SELECT * FROM record where time >= "+QString::number(start)
-                  +" and time <= "+QString::number(end)+"");
+    decltype (BatteryRecord::GetRecords(1,1)) recs;
+    auto sql=QString("SELECT * FROM record where time >= %1 and time <= %2");
+    sql=sql.arg(start).arg(end);
+    qry_->prepare(sql);
     if(!qry_->exec())
     {
         qDebug() << qry_->lastError();
@@ -66,7 +68,8 @@ std::vector<std::pair<time_t, unsigned char> > BatteryRecord::GetRecords(time_t 
         while (qry_->next()) {
             time_t t=qry_->value("time").toLongLong();
             unsigned char per=static_cast<unsigned char>(qry_->value("percent").toInt());
-            recs.emplace_back(std::make_pair(t,per));
+            bool status=qry_->value("status").toInt()==1;
+            recs.emplace_back(std::make_tuple(t,per,status));
         }
     }
 

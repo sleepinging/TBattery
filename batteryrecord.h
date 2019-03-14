@@ -4,7 +4,7 @@
 #include <time.h>
 
 #include <vector>
-#include <utility>
+#include <tuple>
 
 #include <QtSql>
 
@@ -18,9 +18,9 @@ public:
     BatteryRecord(const char* dbname);
     ~BatteryRecord();
 public:
-    int AddRecord(time_t t,int percent);
+    int AddRecord(time_t t, int percent, bool charging=false);
     //获取电池使用记录
-    auto GetRecords(time_t start,time_t end)->std::vector<std::pair<time_t,unsigned char> >;
+    auto GetRecords(time_t start,time_t end)->std::vector<std::tuple<time_t,unsigned char,bool> >;
 public:
     static int Init(const char* dbname="data.db");
     static BatteryRecord* GetInstance();

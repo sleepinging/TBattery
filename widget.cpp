@@ -123,10 +123,12 @@ void Widget::init_bt_rec()
     timer_save_record_->start();
     Widget::save_record();
 
-    auto recs=BatteryRecord::GetInstance()->GetRecords(1552489876,1552489996);
-    for(const auto& p:recs){
-        qDebug()<<"time:"<<p.first<<" per:"<<p.second;
-    }
+//    auto recs=BatteryRecord::GetInstance()->GetRecords(1552541519,1552541885);
+//    for(const auto& p:recs){
+//        qDebug()<<"time:"<<std::get<0>(p)
+//               <<" per:"<<std::get<1>(p)
+//              <<"status:"<<std::get<2>(p);
+//    }
 }
 
 void Widget::showmain()
@@ -202,7 +204,11 @@ void Widget::selected_bkc_b(const QColor &color)
 
 void Widget::save_record()
 {
-    BatteryRecord::GetInstance()->AddRecord(time(nullptr),Battery::percent);
+    BatteryRecord::GetInstance()->AddRecord(
+                time(nullptr),
+                Battery::percent,
+                Battery::status==Battery::Status::CHARGING
+                );
 }
 
 //充电背景色
