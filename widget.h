@@ -28,6 +28,8 @@ private slots:
 
     void on_btn_subc_clicked();
 
+    void on_tabWidget_currentChanged(int index);
+
 private:
     void updatebtshow();
     void showbtinfo();

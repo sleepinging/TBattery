@@ -1,9 +1,14 @@
+#include <QChart>
+using namespace QtCharts;
+
 #include "widget.h"
 #include "ui_widget.h"
 
 #include <QDebug>
 #include <QCloseEvent>
 #include <QMessageBox>
+#include <QLineSeries>
+#include <QCategoryAxis>
 
 #include "battery.h"
 #include "batteryevent.h"
@@ -124,12 +129,12 @@ void Widget::init_bt_rec()
     timer_save_record_->start();
     Widget::save_record();
 
-//    auto recs=BatteryRecord::GetInstance()->GetRecords(1552541519,1552541885);
-//    for(const auto& p:recs){
-//        qDebug()<<"time:"<<std::get<0>(p)
-//               <<" per:"<<std::get<1>(p)
-//              <<"status:"<<std::get<2>(p);
-//    }
+    //    auto recs=BatteryRecord::GetInstance()->GetRecords(1552541519,1552541885);
+    //    for(const auto& p:recs){
+    //        qDebug()<<"time:"<<std::get<0>(p)
+    //               <<" per:"<<std::get<1>(p)
+    //              <<"status:"<<std::get<2>(p);
+    //    }
 }
 
 void Widget::showmain()
@@ -172,7 +177,7 @@ void Widget::onactivetray(QSystemTrayIcon::ActivationReason reason)
     // 单击
     case QSystemTrayIcon::Trigger:
         break;
-    // 双击
+        // 双击
     case QSystemTrayIcon::DoubleClick:
     {
         if(this->isHidden()){
@@ -226,4 +231,45 @@ void Widget::on_btn_subc_clicked()
     auto cf=Config::GetInstance();
     cld_b_->setCurrentColor(cf->color_us_bt);
     cld_b_->show();
+}
+
+void Widget::on_tabWidget_currentChanged(int index)
+{
+    //    qDebug()<<index;
+    if(index==1){
+        auto now=time(nullptr);
+        auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
+        static QLineSeries* line = new QLineSeries();
+        for(const auto& rec:recs){
+            line->append(std::get<0>(rec),std::get<1>(rec));
+        }
+        static QChart* c = new QChart();
+        c->legend()->hide();  // 隐藏图例
+        c->addSeries(line);
+        //        c->createDefaultAxes();// 基于已添加到图表的 series 来创轴
+
+        static QCategoryAxis *axisX = new QCategoryAxis;
+        axisX->setMin(now-86400);
+        axisX->setMax(now);
+        axisX->setStartValue(now-86400);
+        axisX->append("00:00", now-3600*24);
+        axisX->append("06:00", now-3600*18);
+        axisX->append("12:00", now-3600*12);
+        axisX->append("18:00", now-3600*6);
+        axisX->append("24:00", now);
+        c->addAxis(axisX,Qt::AlignBottom);
+
+        static QValueAxis *axisY = new QValueAxis;
+        axisY->setRange(0, 100);
+        axisY->setMin(0);
+        axisY->setMax(100);
+        axisY->setLabelFormat("%d");
+        axisY->setTickCount(11);//10格子
+        c->addAxis(axisY,Qt::AlignLeft);
+        line->attachAxis(axisY);
+
+        c->setTitle("24小时的电量记录");  // 设置图表的标题
+
+        ui->widget->setChart(c);
+    }
 }
