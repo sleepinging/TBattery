@@ -1,11 +1,10 @@
 #include "widget.h"
 #include <QApplication>
+#include <QtDebug>
 
 #include "batteryevent.h"
 #include "config.h"
 
-#include <QColor>
-#include <QtDebug>
 
 int main(int argc, char *argv[])
 {

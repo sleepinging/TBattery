@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,7 +32,8 @@ SOURCES += \
     icontool.cpp \
     config.cpp \
     mystring.cpp \
-    tfile.cpp
+    tfile.cpp \
+    batteryrecord.cpp
 
 HEADERS += \
         widget.h \
@@ -41,7 +42,8 @@ HEADERS += \
     icontool.h \
     config.h \
     mystring.h \
-    tfile.h
+    tfile.h \
+    batteryrecord.h
 
 FORMS += \
         widget.ui

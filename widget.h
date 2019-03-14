@@ -35,6 +35,9 @@ private:
     //初始化托盘
     void inittray();
 
+    //初始化电量记录模块
+    void init_bt_rec();
+
     //显示主窗口
     void showmain();
 
@@ -49,10 +52,16 @@ private:
     //选择完毕电池背景色
     void selected_bkc_b(const QColor &color);
 
+    //保存电量记录
+    static void save_record();
+
 private:
     Ui::Widget *ui;
     QSystemTrayIcon *sti_=nullptr;
+    //更新电量的定时器
     QTimer * timer_=nullptr;
+    //保存记录的定时器
+    QTimer* timer_save_record_=nullptr;
     //右键菜单
     QMenu* menu_=nullptr;
     //充电背景颜色选择
