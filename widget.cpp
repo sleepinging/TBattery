@@ -30,6 +30,7 @@ Widget::Widget(QWidget *parent) :
     connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
     //插拔电源的时候更新
     connect(btevt_,&BatteryEvent::PowerChanged,this,&Widget::updatebtshow);
+    connect(btevt_,&BatteryEvent::PowerChanged,this,&Widget::save_record);
     //选择颜色
     connect(cld_c_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_c);
     connect(cld_b_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_b);
