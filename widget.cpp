@@ -7,7 +7,7 @@ using namespace QtCharts;
 #include <QDebug>
 #include <QCloseEvent>
 #include <QMessageBox>
-#include <QLineSeries>
+#include <QSplineSeries>
 #include <QCategoryAxis>
 #include <QDateTimeAxis>
 
@@ -248,7 +248,7 @@ void Widget::on_select_tab_rec(int )
     auto now=dt.toTime_t();
     auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
 
-    QLineSeries* line = new QLineSeries();
+    QSplineSeries* line = new QSplineSeries();
     line->clear();
     for(const auto& rec:recs){
         line->append(std::get<0>(rec)*1000,std::get<1>(rec));
