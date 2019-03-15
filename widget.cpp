@@ -307,4 +307,5 @@ void Widget::on_select_tab_rec(int )
     c->setTitle("24小时的电量记录");  // 设置图表的标题
 
     ui->widget->setChart(c);
+    ui->widget->setRenderHint(QPainter::Antialiasing);    //抗锯齿
 }
