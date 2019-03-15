@@ -30,6 +30,8 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
+    void on_select_tab_rec(int index);
+
 private:
     void updatebtshow();
     void showbtinfo();

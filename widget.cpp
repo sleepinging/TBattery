@@ -237,39 +237,46 @@ void Widget::on_tabWidget_currentChanged(int index)
 {
     //    qDebug()<<index;
     if(index==1){
-        auto now=time(nullptr);
-        auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
-        static QLineSeries* line = new QLineSeries();
-        for(const auto& rec:recs){
-            line->append(std::get<0>(rec),std::get<1>(rec));
-        }
-        static QChart* c = new QChart();
-        c->legend()->hide();  // 隐藏图例
-        c->addSeries(line);
-        //        c->createDefaultAxes();// 基于已添加到图表的 series 来创轴
-
-        static QCategoryAxis *axisX = new QCategoryAxis;
-        axisX->setMin(now-86400);
-        axisX->setMax(now);
-        axisX->setStartValue(now-86400);
-        axisX->append("00:00", now-3600*24);
-        axisX->append("06:00", now-3600*18);
-        axisX->append("12:00", now-3600*12);
-        axisX->append("18:00", now-3600*6);
-        axisX->append("24:00", now);
-        c->addAxis(axisX,Qt::AlignBottom);
-
-        static QValueAxis *axisY = new QValueAxis;
-        axisY->setRange(0, 100);
-        axisY->setMin(0);
-        axisY->setMax(100);
-        axisY->setLabelFormat("%d");
-        axisY->setTickCount(11);//10格子
-        c->addAxis(axisY,Qt::AlignLeft);
-        line->attachAxis(axisY);
-
-        c->setTitle("24小时的电量记录");  // 设置图表的标题
-
-        ui->widget->setChart(c);
+        on_select_tab_rec(index);
     }
+}
+
+void Widget::on_select_tab_rec(int )
+{
+    auto now=time(nullptr);
+    auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
+    static QLineSeries* line = new QLineSeries();
+    line->clear();
+    for(const auto& rec:recs){
+        line->append(std::get<0>(rec),std::get<1>(rec));
+    }
+    static QChart* c = new QChart();
+    c->legend()->hide();  // 隐藏图例
+    c->addSeries(line);
+    //        c->createDefaultAxes();// 基于已添加到图表的 series 来创轴
+
+    static QCategoryAxis *axisX = new QCategoryAxis;
+    axisX->setMin(now-86400);
+    axisX->setMax(now);
+    axisX->setStartValue(now-86400);
+    axisX->append("00:00", now-3600*24);
+    axisX->append("06:00", now-3600*18);
+    axisX->append("12:00", now-3600*12);
+    axisX->append("18:00", now-3600*6);
+    axisX->append("24:00", now);
+    c->addAxis(axisX,Qt::AlignBottom);
+    line->attachAxis(axisX);
+
+    static QValueAxis *axisY = new QValueAxis;
+    axisY->setRange(0, 100);
+    axisY->setMin(0);
+    axisY->setMax(100);
+    axisY->setLabelFormat("%d");
+    axisY->setTickCount(11);//10格子
+    c->addAxis(axisY,Qt::AlignLeft);
+    line->attachAxis(axisY);
+
+    c->setTitle("24小时的电量记录");  // 设置图表的标题
+
+    ui->widget->setChart(c);
 }
