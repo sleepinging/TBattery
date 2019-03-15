@@ -259,7 +259,7 @@ void Widget::on_select_tab_rec(int )
     //    line->clear();
     // 创建散列点的序列,显示充电点
     QScatterSeries *scatterSeries = new QScatterSeries();
-    scatterSeries->setColor(Qt::green);
+    scatterSeries->setColor(QColor(10,200,50));
     scatterSeries->setMarkerSize(5);
     for(const auto& rec:recs){
         line->append(std::get<0>(rec)*1000,std::get<1>(rec));
