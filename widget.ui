@@ -24,31 +24,46 @@
        <string>配置</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="1">
+        <widget class="QLabel" name="lb_st">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>充电</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>当前电量</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="lb_bp">
-         <property name="text">
-          <string>99</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>电池状态</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="lb_st">
+       <item row="2" column="1">
+        <widget class="QPushButton" name="btn_subc">
          <property name="text">
-          <string>充电</string>
+          <string>使用电池时的背景色</string>
          </property>
         </widget>
        </item>
@@ -59,10 +74,15 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="btn_subc">
+       <item row="0" column="1">
+        <widget class="QLabel" name="lb_bp">
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string>使用电池时的背景色</string>
+          <string>99</string>
          </property>
         </widget>
        </item>
