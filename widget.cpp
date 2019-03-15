@@ -10,6 +10,7 @@ using namespace QtCharts;
 #include <QLineSeries>
 #include <QCategoryAxis>
 #include <QDateTimeAxis>
+#include <QScatterSeries>
 
 #include "battery.h"
 #include "batteryevent.h"
@@ -248,10 +249,23 @@ void Widget::on_select_tab_rec(int )
     auto now=dt.toTime_t();
     auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
 
+    //电量的折线
     QLineSeries* line = new QLineSeries();
-    line->clear();
+    QPen pen;
+    pen.setStyle(Qt::SolidLine);
+    pen.setWidth(3);
+    pen.setColor(Qt::blue);
+    line->setPen(pen);
+    //    line->clear();
+    // 创建散列点的序列,显示充电点
+    QScatterSeries *scatterSeries = new QScatterSeries();
+    scatterSeries->setColor(Qt::green);
+    scatterSeries->setMarkerSize(5);
     for(const auto& rec:recs){
         line->append(std::get<0>(rec)*1000,std::get<1>(rec));
+        if(std::get<2>(rec)){
+            scatterSeries->append(std::get<0>(rec)*1000,std::get<1>(rec));
+        }
     }
     static QChart* c = new QChart();
     c->legend()->hide();  // 隐藏图例
@@ -264,7 +278,11 @@ void Widget::on_select_tab_rec(int )
     for(const auto &s:line->attachedAxes()){
         line->detachAxis(s);
     }
+    for(const auto &s:scatterSeries->attachedAxes()){
+        line->detachAxis(s);
+    }
     c->addSeries(line);
+    c->addSeries(scatterSeries);
     //        c->createDefaultAxes();// 基于已添加到图表的 series 来创轴
     dt.addSecs(3600*-12).toString("HH:mm");
 
@@ -274,6 +292,7 @@ void Widget::on_select_tab_rec(int )
     axisX->setFormat("HH:mm");
     c->addAxis(axisX,Qt::AlignBottom);
     line->attachAxis(axisX);
+    scatterSeries->attachAxis(axisX);
 
     QValueAxis *axisY = new QValueAxis;
     axisY->setRange(0, 100);
@@ -283,6 +302,7 @@ void Widget::on_select_tab_rec(int )
     axisY->setTickCount(11);//10格子
     c->addAxis(axisY,Qt::AlignLeft);
     line->attachAxis(axisY);
+    scatterSeries->attachAxis(axisY);
 
     c->setTitle("24小时的电量记录");  // 设置图表的标题
 
