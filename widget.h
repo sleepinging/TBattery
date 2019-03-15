@@ -30,8 +30,6 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
-    void on_select_tab_rec(int index);
-
 private:
     void updatebtshow();
     void showbtinfo();
@@ -58,6 +56,8 @@ private:
 
     //保存电量记录
     static void save_record();
+
+    void on_select_tab_rec(int index);
 
 private:
     Ui::Widget *ui;

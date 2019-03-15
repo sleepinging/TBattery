@@ -9,6 +9,7 @@ using namespace QtCharts;
 #include <QMessageBox>
 #include <QLineSeries>
 #include <QCategoryAxis>
+#include <QDateTimeAxis>
 
 #include "battery.h"
 #include "batteryevent.h"
@@ -243,27 +244,35 @@ void Widget::on_tabWidget_currentChanged(int index)
 
 void Widget::on_select_tab_rec(int )
 {
-    auto now=time(nullptr);
+    auto dt=QDateTime::currentDateTime();
+    auto now=dt.toTime_t();
     auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
+
     static QLineSeries* line = new QLineSeries();
     line->clear();
     for(const auto& rec:recs){
-        line->append(std::get<0>(rec),std::get<1>(rec));
+        line->append(std::get<0>(rec)*1000,std::get<1>(rec));
     }
     static QChart* c = new QChart();
     c->legend()->hide();  // 隐藏图例
     c->addSeries(line);
     //        c->createDefaultAxes();// 基于已添加到图表的 series 来创轴
+    dt.addSecs(3600*-12).toString("HH:mm");
 
-    static QCategoryAxis *axisX = new QCategoryAxis;
-    axisX->setMin(now-86400);
-    axisX->setMax(now);
-    axisX->setStartValue(now-86400);
-    axisX->append("00:00", now-3600*24);
-    axisX->append("06:00", now-3600*18);
-    axisX->append("12:00", now-3600*12);
-    axisX->append("18:00", now-3600*6);
-    axisX->append("24:00", now);
+    static  QDateTimeAxis *axisX = new  QDateTimeAxis;
+    axisX->setTickCount(8);
+    axisX->setRange(dt.addDays(-1),dt);
+    axisX->setFormat("HH:mm");
+    //    static QCategoryAxis *axisX = new QCategoryAxis;
+    //    axisX->setMin(now-86400);
+    //    axisX->setMax(now);
+    //    axisX->setStartValue(now-86400);
+    //    dt=dt.addDays(-1);
+    //    unsigned int spt=6;
+    //    unsigned int d=24/spt;
+    //    for(unsigned int i=0;i<=spt;++i){
+    //         axisX->append(dt.addSecs(3600*d*i).toString("在 HH:mm"), dt.addSecs(3600*d*i).toTime_t());
+    //    }
     c->addAxis(axisX,Qt::AlignBottom);
     line->attachAxis(axisX);
 
