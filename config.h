@@ -54,6 +54,15 @@ class Config
     //使用电池的颜色
     QRgb color_us_bt=qRgba(0xff,0xff,0xff,250);
 
+    //用电池时字体颜色
+    QRgb color_font_u=qRgba(0x00,0x00,0x00,0xff);
+
+    //用充电时字体颜色
+    QRgb color_font_c=qRgba(0x00,0x00,0x00,0xff);
+
+    //背景不透明度
+//    unsigned char background_transparency=0;
+
     //其它配置项,key都会变成小写
     std::unordered_map<std::string, std::string> kvmap;
 

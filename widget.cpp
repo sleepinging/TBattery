@@ -27,8 +27,10 @@ Widget::Widget(QWidget *parent) :
     btevt_=new BatteryEvent();
     timer_=new QTimer();
     menu_=new QMenu();
+
     cld_c_=new QColorDialog();
     cld_b_=new QColorDialog();
+    cld_f_u_=new QColorDialog();
 
     //初始化托盘
     inittray();
@@ -41,6 +43,7 @@ Widget::Widget(QWidget *parent) :
     //选择颜色
     connect(cld_c_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_c);
     connect(cld_b_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_b);
+    connect(cld_f_u_,&QColorDialog::colorSelected,this,&Widget::selected_fc_u);
 
     timer_->setInterval(1000);
     timer_->start();
@@ -52,16 +55,25 @@ Widget::Widget(QWidget *parent) :
 Widget::~Widget()
 {
     delete ui;
+
     delete sti_;
     sti_=nullptr;
+
     delete timer_;
     timer_=nullptr;
+
     delete menu_;
     menu_=nullptr;
+
     delete cld_c_;
     cld_c_=nullptr;
+
     delete cld_b_;
     cld_b_=nullptr;
+
+    delete cld_f_u_;
+    cld_f_u_=nullptr;
+
     delete timer_save_record_;
     timer_save_record_=nullptr;
 }
@@ -210,6 +222,14 @@ void Widget::selected_bkc_b(const QColor &color)
     IconTool::ClearCache();
 }
 
+void Widget::selected_fc_u(const QColor &color)
+{
+    auto cf=Config::GetInstance();
+    cf->color_font_u=color.rgba();
+    cf->Save("config.ini");
+    IconTool::ClearCache();
+}
+
 void Widget::save_record()
 {
     BatteryRecord::GetInstance()->AddRecord(
@@ -308,4 +328,12 @@ void Widget::on_select_tab_rec(int )
 
     ui->widget->setChart(c);
     ui->widget->setRenderHint(QPainter::Antialiasing);    //抗锯齿
+}
+
+//点击选择字体颜色
+void Widget::on_btn_color_font_u_clicked()
+{
+    auto cf=Config::GetInstance();
+    cld_f_u_->setCurrentColor(cf->color_font_u);
+    cld_f_u_->show();
 }

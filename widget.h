@@ -30,6 +30,8 @@ private slots:
 
     void on_tabWidget_currentChanged(int index);
 
+    void on_btn_color_font_u_clicked();
+
 private:
     void updatebtshow();
     void showbtinfo();
@@ -54,6 +56,9 @@ private:
     //选择完毕电池背景色
     void selected_bkc_b(const QColor &color);
 
+    //选择完毕用电池时字体颜色
+    void selected_fc_u(const QColor &color);
+
     //保存电量记录
     static void save_record();
 
@@ -72,6 +77,8 @@ private:
     QColorDialog* cld_c_=nullptr;
     //电池背景颜色选择
     QColorDialog* cld_b_=nullptr;
+    //用电池时字体颜色选择
+    QColorDialog* cld_f_u_=nullptr;
 };
 
 #endif // WIDGET_H

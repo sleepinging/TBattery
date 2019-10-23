@@ -84,6 +84,11 @@ bool Config::handleline(const std::string &line){
         color_us_bt=Str2Color(value);
         return true;
     }
+    else if (key == "color_font_u")
+    {
+        color_font_u=Str2Color(value);
+        return true;
+    }
 
     else if (key == "end")
     {
@@ -157,6 +162,7 @@ int Config::Save(const string &cf)
 
     of<<"back_color_using="<<Color2Str(is_->color_us_bt) <<"\n";
     of<<"back_color_charging="<<Color2Str(is_->color_charging) <<"\n";
+    of<<"color_font_u="<<Color2Str(is_->color_font_u) <<"\n";
 
     return true;
 }

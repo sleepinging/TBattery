@@ -39,12 +39,11 @@ void IconTool::ClearCache()
 
 QIcon IconTool::genIcon(int num, bool charging)
 {
+    auto cfg=Config::GetInstance();
     //字体颜色
-    QColor fc=Qt::black;
-
-    QColor bk=charging?
-        Config::GetInstance()->color_charging:
-        Config::GetInstance()->color_us_bt;
+    QColor fc=cfg->color_font_u;
+    //背景色
+    QColor bk=charging?cfg->color_charging:cfg->color_us_bt;
 
     static QSize size(32,32); //指定图片大小;
     static QImage image(size,QImage::Format_ARGB32);
