@@ -2,6 +2,7 @@
 
 #include <QPainter>
 #include <QString>
+#include <QDebug>
 
 #include "config.h"
 
@@ -37,11 +38,15 @@ void IconTool::ClearCache()
     mtx_.unlock();
 }
 
+//void print_color(const QColor& c){
+//    qDebug()<<c.red()<<","<<c.green()<<","<<c.blue()<<","<<c.alpha();
+//}
+
 QIcon IconTool::genIcon(int num, bool charging)
 {
     auto cfg=Config::GetInstance();
     //字体颜色
-    QColor fc=cfg->color_font_u;
+    QColor fc=charging?cfg->color_font_c:cfg->color_font_u;
     //背景色
     QColor bk=charging?cfg->color_charging:cfg->color_us_bt;
 

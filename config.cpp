@@ -35,13 +35,20 @@ bool Config::LoadFromString(const std::string &str)
     return true;
 }
 
-static string Color2Str(const QRgb& c){
-    return QString::number(c,16).toStdString();
+QColor qrgb_2_color(QRgb qr){
+    QColor color;
+    color.setRgb(qRed(qr),qGreen(qr),qBlue(qr),qAlpha(qr));
+    return color;
 }
 
-static QRgb Str2Color(const string& c){
-    return QString(c.c_str()).toUInt(nullptr,16);
+static string Color2Str(const QColor& c){
+    return QString::number(c.rgba(),16).toStdString();
 }
+
+static QColor Str2Color(const string& c){
+    return qrgb_2_color(QString(c.c_str()).toUInt(nullptr,16));
+}
+
 
 //处理一行,返回false停止
 bool Config::handleline(const std::string &line){
@@ -87,6 +94,11 @@ bool Config::handleline(const std::string &line){
     else if (key == "color_font_u")
     {
         color_font_u=Str2Color(value);
+        return true;
+    }
+    else if (key == "color_font_c")
+    {
+        color_font_c=Str2Color(value);
         return true;
     }
 
@@ -163,6 +175,7 @@ int Config::Save(const string &cf)
     of<<"back_color_using="<<Color2Str(is_->color_us_bt) <<"\n";
     of<<"back_color_charging="<<Color2Str(is_->color_charging) <<"\n";
     of<<"color_font_u="<<Color2Str(is_->color_font_u) <<"\n";
+    of<<"color_font_c="<<Color2Str(is_->color_font_c) <<"\n";
 
     return true;
 }

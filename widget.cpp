@@ -29,8 +29,13 @@ Widget::Widget(QWidget *parent) :
     menu_=new QMenu();
 
     cld_c_=new QColorDialog();
+    cld_c_->setOption(QColorDialog::ShowAlphaChannel);
     cld_b_=new QColorDialog();
+    cld_b_->setOption(QColorDialog::ShowAlphaChannel);
     cld_f_u_=new QColorDialog();
+    cld_f_u_->setOption(QColorDialog::ShowAlphaChannel);
+    cld_f_c_=new QColorDialog();
+    cld_f_c_->setOption(QColorDialog::ShowAlphaChannel);
 
     //初始化托盘
     inittray();
@@ -44,6 +49,7 @@ Widget::Widget(QWidget *parent) :
     connect(cld_c_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_c);
     connect(cld_b_,&QColorDialog::colorSelected,this,&Widget::selected_bkc_b);
     connect(cld_f_u_,&QColorDialog::colorSelected,this,&Widget::selected_fc_u);
+    connect(cld_f_c_,&QColorDialog::colorSelected,this,&Widget::selected_fc_c);
 
     timer_->setInterval(1000);
     timer_->start();
@@ -73,6 +79,9 @@ Widget::~Widget()
 
     delete cld_f_u_;
     cld_f_u_=nullptr;
+
+    delete cld_f_c_;
+    cld_f_c_=nullptr;
 
     delete timer_save_record_;
     timer_save_record_=nullptr;
@@ -209,7 +218,7 @@ void Widget::onactivetray(QSystemTrayIcon::ActivationReason reason)
 void Widget::selected_bkc_c(const QColor &color)
 {
     auto cf=Config::GetInstance();
-    cf->color_charging=color.rgba();
+    cf->color_charging=color;
     cf->Save("config.ini");
     IconTool::ClearCache();
 }
@@ -217,7 +226,7 @@ void Widget::selected_bkc_c(const QColor &color)
 void Widget::selected_bkc_b(const QColor &color)
 {
     auto cf=Config::GetInstance();
-    cf->color_us_bt=color.rgba();
+    cf->color_us_bt=color;
     cf->Save("config.ini");
     IconTool::ClearCache();
 }
@@ -225,7 +234,15 @@ void Widget::selected_bkc_b(const QColor &color)
 void Widget::selected_fc_u(const QColor &color)
 {
     auto cf=Config::GetInstance();
-    cf->color_font_u=color.rgba();
+    cf->color_font_u=color;
+    cf->Save("config.ini");
+    IconTool::ClearCache();
+}
+
+void Widget::selected_fc_c(const QColor &color)
+{
+    auto cf=Config::GetInstance();
+    cf->color_font_c=color;
     cf->Save("config.ini");
     IconTool::ClearCache();
 }
@@ -244,6 +261,7 @@ void Widget::on_btn_scbc_clicked()
 {
     auto cf=Config::GetInstance();
     cld_c_->setCurrentColor(cf->color_charging);
+//    qDebug()<<"show "<<QString::number(cf->color_charging.rgba(),16);
     cld_c_->show();
 }
 
@@ -330,10 +348,18 @@ void Widget::on_select_tab_rec(int )
     ui->widget->setRenderHint(QPainter::Antialiasing);    //抗锯齿
 }
 
-//点击选择字体颜色
+//点击选择使用电池时的字体颜色
 void Widget::on_btn_color_font_u_clicked()
 {
     auto cf=Config::GetInstance();
     cld_f_u_->setCurrentColor(cf->color_font_u);
     cld_f_u_->show();
+}
+
+//点击选择充电时的字体颜色
+void Widget::on_btn_color_font_c_clicked()
+{
+    auto cf =Config::GetInstance();
+    cld_f_c_->setCurrentColor(cf->color_font_c);
+    cld_f_c_->show();
 }

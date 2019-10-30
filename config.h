@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <vector>
 
-//#include <QColor>
+#include <QColor>
 #include <QRgb>
 
 //调试消息等级
@@ -49,16 +49,16 @@ class Config
   public:
 
     //充电颜色
-    QRgb color_charging=qRgba(0xaf,0xff,0xaf,250);
+    QColor color_charging=QColor(0xaf,0xff,0xaf,250);
 
     //使用电池的颜色
-    QRgb color_us_bt=qRgba(0xff,0xff,0xff,250);
+    QColor color_us_bt=QColor(0xff,0xff,0xff,250);
 
     //用电池时字体颜色
-    QRgb color_font_u=qRgba(0x00,0x00,0x00,0xff);
+    QColor color_font_u=QColor(0x00,0x00,0x00,0xff);
 
     //用充电时字体颜色
-    QRgb color_font_c=qRgba(0x00,0x00,0x00,0xff);
+    QColor color_font_c=QColor(0x00,0x00,0x00,0xff);
 
     //背景不透明度
 //    unsigned char background_transparency=0;

@@ -32,6 +32,8 @@ private slots:
 
     void on_btn_color_font_u_clicked();
 
+    void on_btn_color_font_c_clicked();
+
 private:
     void updatebtshow();
     void showbtinfo();
@@ -59,6 +61,9 @@ private:
     //选择完毕用电池时字体颜色
     void selected_fc_u(const QColor &color);
 
+    //选择完毕充电时字体颜色
+    void selected_fc_c(const QColor &color);
+
     //保存电量记录
     static void save_record();
 
@@ -79,6 +84,8 @@ private:
     QColorDialog* cld_b_=nullptr;
     //用电池时字体颜色选择
     QColorDialog* cld_f_u_=nullptr;
+    //充电时字体颜色选择
+    QColorDialog* cld_f_c_=nullptr;
 };
 
 #endif // WIDGET_H
