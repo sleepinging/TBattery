@@ -27,7 +27,6 @@ Widget::Widget(QWidget *parent) :
     btevt_=new BatteryEvent();
     timer_=new QTimer();
     menu_=new QMenu();
-    chart_ = new QtCharts::QChart();
 
     cld_c_=new QColorDialog();
     cld_c_->setOption(QColorDialog::ShowAlphaChannel);
@@ -40,6 +39,9 @@ Widget::Widget(QWidget *parent) :
 
     //初始化托盘
     inittray();
+
+    //初始化chart
+    init_chart();
 
     //重复检测电量
     connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
@@ -162,6 +164,15 @@ void Widget::init_bt_rec()
     //               <<" per:"<<std::get<1>(p)
     //              <<"status:"<<std::get<2>(p);
     //    }
+}
+
+void Widget::init_chart()
+{
+    chart_ = new QtCharts::QChart();
+    chart_->legend()->hide();  // 隐藏图例
+    chart_->setTitle("24小时的电量记录");  // 设置图表的标题
+    ui->widget->setChart(chart_);
+    ui->widget->setRenderHint(QPainter::Antialiasing);    //抗锯齿
 }
 
 void Widget::showmain()
@@ -291,25 +302,7 @@ void Widget::on_select_tab_rec(int )
     auto now=dt.toTime_t();
     auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
 
-    //电量的折线
-    QLineSeries* line = new QLineSeries();
-    QPen pen;
-    pen.setStyle(Qt::SolidLine);
-    pen.setWidth(3);
-    pen.setColor(Qt::blue);
-    line->setPen(pen);
-    //    line->clear();
-    // 创建散列点的序列,显示充电点
-    QScatterSeries *scatterSeries = new QScatterSeries();
-    scatterSeries->setColor(QColor(10,200,50));
-    scatterSeries->setMarkerSize(5);
-    for(const auto& rec:recs){
-        line->append(std::get<0>(rec)*1000,std::get<1>(rec));//用电状态
-        if(std::get<2>(rec)){//充电状态
-            scatterSeries->append(std::get<0>(rec)*1000,std::get<1>(rec));
-        }
-    }
-    chart_->legend()->hide();  // 隐藏图例
+    //删除原来的线
     for(const auto&s:chart_->series()){
         chart_->removeSeries(s);
     }
@@ -317,33 +310,74 @@ void Widget::on_select_tab_rec(int )
         chart_->removeAxis(a);
     }
 
-    chart_->addSeries(line);
-    chart_->addSeries(scatterSeries);
-    //        c->createDefaultAxes();// 基于已添加到图表的 series 来创轴
+    QPen pen;
+    {
+        pen.setStyle(Qt::SolidLine);
+        pen.setWidth(3);
+        pen.setColor(Qt::blue);
+    }
+    QPen pen_charge;
+    {
+        pen_charge.setStyle(Qt::SolidLine);
+        pen_charge.setWidth(3);
+        pen_charge.setColor(Qt::green);
+    }
+    //电量的折线
+    std::vector<QLineSeries*> lines;
+    int last_stat=-1;
+    for(auto it=recs.cbegin();it!=recs.cend();++it){
+        const auto& rec=*it;
+        int st=std::get<2>(rec);//0用电池,1充电
+        QLineSeries* line;
+        if(st==last_stat){
+            line=lines.back();
+        }else{
+            line = new QLineSeries();
+            //连接上一个点防止看起来断掉
+            if(it!=recs.cbegin()){
+                auto r=*(it-1);
+                line->append(std::get<0>(r)*1000,std::get<1>(r));
+            }
+            if(st==1){//充电
+                line->setPen(pen_charge);
+            }else{//用电
+                line->setPen(pen);
+            }
+            lines.emplace_back(line);
+        }
+        line->append(std::get<0>(rec)*1000,std::get<1>(rec));
+        last_stat=st;
+    }
+
+    for(auto &line:lines){
+        chart_->addSeries(line);
+    }
+
     dt.addSecs(3600*-12).toString("HH:mm");
 
     QDateTimeAxis *axisX = new  QDateTimeAxis;
-    axisX->setTickCount(9);
-    axisX->setRange(dt.addDays(-1),dt);
-    axisX->setFormat("HH:mm");
+    {
+        axisX->setTickCount(9);
+        axisX->setRange(dt.addDays(-1),dt);
+        axisX->setFormat("HH:mm");
+    }
     chart_->addAxis(axisX,Qt::AlignBottom);
-    line->attachAxis(axisX);
-    scatterSeries->attachAxis(axisX);
+    for(auto &line:lines){
+        line->attachAxis(axisX);
+    }
 
     QValueAxis *axisY = new QValueAxis;
-    axisY->setRange(0, 100);
-    axisY->setMin(0);
-    axisY->setMax(100);
-    axisY->setLabelFormat("%d");
-    axisY->setTickCount(11);//10格子
+    {
+        axisY->setRange(0, 100);
+        axisY->setMin(0);
+        axisY->setMax(100);
+        axisY->setLabelFormat("%d");
+        axisY->setTickCount(11);//10格子
+    }
     chart_->addAxis(axisY,Qt::AlignLeft);
-    line->attachAxis(axisY);
-    scatterSeries->attachAxis(axisY);
-
-    chart_->setTitle("24小时的电量记录");  // 设置图表的标题
-
-    ui->widget->setChart(chart_);
-    ui->widget->setRenderHint(QPainter::Antialiasing);    //抗锯齿
+    for(auto &line:lines){
+        line->attachAxis(axisY);
+    }
 }
 
 //点击选择使用电池时的字体颜色

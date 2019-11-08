@@ -47,6 +47,9 @@ private:
     //初始化电量记录模块
     void init_bt_rec();
 
+    //初始化统计图
+    void init_chart();
+
     //显示主窗口
     void showmain();
 
