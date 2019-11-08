@@ -9,6 +9,9 @@
 #include <QColorDialog>
 
 class BatteryEvent;
+namespace QtCharts {
+    class QChart;
+}
 
 namespace Ui {
 class Widget;
@@ -86,6 +89,8 @@ private:
     QColorDialog* cld_f_u_=nullptr;
     //充电时字体颜色选择
     QColorDialog* cld_f_c_=nullptr;
+    //统计图
+    QtCharts::QChart* chart_ =nullptr;
 };
 
 #endif // WIDGET_H

@@ -27,6 +27,7 @@ Widget::Widget(QWidget *parent) :
     btevt_=new BatteryEvent();
     timer_=new QTimer();
     menu_=new QMenu();
+    chart_ = new QtCharts::QChart();
 
     cld_c_=new QColorDialog();
     cld_c_->setOption(QColorDialog::ShowAlphaChannel);
@@ -85,6 +86,9 @@ Widget::~Widget()
 
     delete timer_save_record_;
     timer_save_record_=nullptr;
+
+    delete chart_;
+    chart_=nullptr;
 }
 
 void Widget::updatebtshow()
@@ -300,27 +304,21 @@ void Widget::on_select_tab_rec(int )
     scatterSeries->setColor(QColor(10,200,50));
     scatterSeries->setMarkerSize(5);
     for(const auto& rec:recs){
-        line->append(std::get<0>(rec)*1000,std::get<1>(rec));
-        if(std::get<2>(rec)){
+        line->append(std::get<0>(rec)*1000,std::get<1>(rec));//用电状态
+        if(std::get<2>(rec)){//充电状态
             scatterSeries->append(std::get<0>(rec)*1000,std::get<1>(rec));
         }
     }
-    static QChart* c = new QChart();
-    c->legend()->hide();  // 隐藏图例
-    for(const auto&s:c->series()){
-        c->removeSeries(s);
+    chart_->legend()->hide();  // 隐藏图例
+    for(const auto&s:chart_->series()){
+        chart_->removeSeries(s);
     }
-    for(const auto &a:c->axes()){
-        c->removeAxis(a);
+    for(const auto &a:chart_->axes()){
+        chart_->removeAxis(a);
     }
-    for(const auto &s:line->attachedAxes()){
-        line->detachAxis(s);
-    }
-    for(const auto &s:scatterSeries->attachedAxes()){
-        line->detachAxis(s);
-    }
-    c->addSeries(line);
-    c->addSeries(scatterSeries);
+
+    chart_->addSeries(line);
+    chart_->addSeries(scatterSeries);
     //        c->createDefaultAxes();// 基于已添加到图表的 series 来创轴
     dt.addSecs(3600*-12).toString("HH:mm");
 
@@ -328,7 +326,7 @@ void Widget::on_select_tab_rec(int )
     axisX->setTickCount(9);
     axisX->setRange(dt.addDays(-1),dt);
     axisX->setFormat("HH:mm");
-    c->addAxis(axisX,Qt::AlignBottom);
+    chart_->addAxis(axisX,Qt::AlignBottom);
     line->attachAxis(axisX);
     scatterSeries->attachAxis(axisX);
 
@@ -338,13 +336,13 @@ void Widget::on_select_tab_rec(int )
     axisY->setMax(100);
     axisY->setLabelFormat("%d");
     axisY->setTickCount(11);//10格子
-    c->addAxis(axisY,Qt::AlignLeft);
+    chart_->addAxis(axisY,Qt::AlignLeft);
     line->attachAxis(axisY);
     scatterSeries->attachAxis(axisY);
 
-    c->setTitle("24小时的电量记录");  // 设置图表的标题
+    chart_->setTitle("24小时的电量记录");  // 设置图表的标题
 
-    ui->widget->setChart(c);
+    ui->widget->setChart(chart_);
     ui->widget->setRenderHint(QPainter::Antialiasing);    //抗锯齿
 }
 
