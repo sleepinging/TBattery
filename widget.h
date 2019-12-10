@@ -4,11 +4,11 @@
 #include <QWidget>
 
 #include <QSystemTrayIcon>
-#include <QTimer>
 #include <QMenu>
 #include <QColorDialog>
 
 class BatteryEvent;
+class QTimer;
 namespace QtCharts {
     class QChart;
 }
@@ -53,6 +53,9 @@ private:
     //显示主窗口
     void showmain();
 
+    //如果需要更新统计图就更新
+    void update_chart_need();
+
     //更新统计图
     void update_chart();
 
@@ -82,9 +85,11 @@ private:
     Ui::Widget *ui;
     QSystemTrayIcon *sti_=nullptr;
     //更新电量的定时器
-    QTimer * timer_=nullptr;
+    QTimer * timer_update_battery_=nullptr;
     //保存记录的定时器
     QTimer* timer_save_record_=nullptr;
+    //更新图表的计时器
+    QTimer *timer_update_chart_=nullptr;
     //右键菜单
     QMenu* menu_=nullptr;
     //充电背景颜色选择

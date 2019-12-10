@@ -6,6 +6,7 @@ using namespace QtCharts;
 
 #include <QDebug>
 #include <QCloseEvent>
+#include <QTimer>
 #include <QMessageBox>
 #include <QLineSeries>
 #include <QCategoryAxis>
@@ -25,7 +26,7 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
 
     btevt_=new BatteryEvent();
-    timer_=new QTimer();
+    timer_update_battery_=new QTimer();
     menu_=new QMenu();
 
     cld_c_=new QColorDialog();
@@ -44,7 +45,7 @@ Widget::Widget(QWidget *parent) :
     init_chart();
 
     //重复检测电量
-    connect(timer_,&QTimer::timeout,this,&Widget::updatebtshow);
+    connect(timer_update_battery_,&QTimer::timeout,this,&Widget::updatebtshow);
     //插拔电源的时候更新
     connect(btevt_,&BatteryEvent::PowerChanged,this,&Widget::updatebtshow);
     connect(btevt_,&BatteryEvent::PowerChanged,this,&Widget::save_record);
@@ -54,11 +55,16 @@ Widget::Widget(QWidget *parent) :
     connect(cld_f_u_,&QColorDialog::colorSelected,this,&Widget::selected_fc_u);
     connect(cld_f_c_,&QColorDialog::colorSelected,this,&Widget::selected_fc_c);
 
-    timer_->setInterval(1000);
-    timer_->start();
+    timer_update_battery_->setInterval(1000);
+    timer_update_battery_->start();
     updatebtshow();
 
     init_bt_rec();
+
+    timer_update_chart_=new QTimer();
+    timer_update_chart_->setInterval(1000*10);
+    timer_update_chart_->start();
+    connect(timer_update_chart_,&QTimer::timeout,this,&Widget::update_chart_need);
 }
 
 Widget::~Widget()
@@ -68,8 +74,11 @@ Widget::~Widget()
     delete sti_;
     sti_=nullptr;
 
-    delete timer_;
-    timer_=nullptr;
+    delete timer_update_battery_;
+    timer_update_battery_=nullptr;
+
+    delete timer_update_chart_;
+    timer_update_chart_=nullptr;
 
     delete menu_;
     menu_=nullptr;
@@ -181,6 +190,20 @@ void Widget::showmain()
     if(this->isMinimized()){
         this->showNormal();
     }
+}
+
+void Widget::update_chart_need()
+{
+    auto idx=ui->tabWidget->currentIndex();
+//    qDebug()<<"idx:"<<idx;
+    if(idx != 1){
+        return;
+    }
+    if(this->isMinimized()){
+        return;
+    }
+//    qDebug()<<"update chart";
+    update_chart();
 }
 
 void Widget::update_chart()
