@@ -53,6 +53,9 @@ private:
     //显示主窗口
     void showmain();
 
+    //更新统计图
+    void update_chart();
+
     void closeEvent(QCloseEvent *event) override;
     void changeEvent(QEvent * event) override;
 

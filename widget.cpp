@@ -183,6 +183,90 @@ void Widget::showmain()
     }
 }
 
+void Widget::update_chart()
+{
+    auto dt=QDateTime::currentDateTime();
+    auto now=static_cast<time_t>(dt.toTime_t());
+    auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
+
+    //删除原来的线
+    for(const auto&s:chart_->series()){
+        chart_->removeSeries(s);
+    }
+    for(const auto &a:chart_->axes()){
+        chart_->removeAxis(a);
+    }
+
+    QPen pen;
+    {
+        pen.setStyle(Qt::SolidLine);
+        pen.setWidth(3);
+        pen.setColor(Qt::blue);
+    }
+    QPen pen_charge;
+    {
+        pen_charge.setStyle(Qt::SolidLine);
+        pen_charge.setWidth(3);
+        pen_charge.setColor(Qt::green);
+    }
+    //电量的折线
+    std::vector<QLineSeries*> lines;
+    int last_stat=-1;
+    for(auto it=recs.cbegin();it!=recs.cend();++it){
+        const auto& rec=*it;
+        int st=std::get<2>(rec);//0用电池,1充电
+        QLineSeries* line;
+        if(st==last_stat){
+            line=lines.back();
+        }else{
+            line = new QLineSeries();
+            //连接上一个点防止看起来断掉
+            if(it!=recs.cbegin()){
+                auto r=*(it-1);
+                line->append(std::get<0>(r)*1000,std::get<1>(r));
+            }
+            if(st==1){//充电
+                line->setPen(pen_charge);
+            }else{//用电
+                line->setPen(pen);
+            }
+            lines.emplace_back(line);
+        }
+        line->append(std::get<0>(rec)*1000,std::get<1>(rec));
+        last_stat=st;
+    }
+
+    for(auto &line:lines){
+        chart_->addSeries(line);
+    }
+
+    dt.addSecs(3600*-12).toString("HH:mm");
+
+    QDateTimeAxis *axisX = new  QDateTimeAxis;
+    {
+        axisX->setTickCount(9);
+        axisX->setRange(dt.addDays(-1),dt);
+        axisX->setFormat("HH:mm");
+    }
+    chart_->addAxis(axisX,Qt::AlignBottom);
+    for(auto &line:lines){
+        line->attachAxis(axisX);
+    }
+
+    QValueAxis *axisY = new QValueAxis;
+    {
+        axisY->setRange(0, 100);
+        axisY->setMin(0);
+        axisY->setMax(100);
+        axisY->setLabelFormat("%d");
+        axisY->setTickCount(11);//10格子
+    }
+    chart_->addAxis(axisY,Qt::AlignLeft);
+    for(auto &line:lines){
+        line->attachAxis(axisY);
+    }
+}
+
 void Widget::closeEvent(QCloseEvent *e)
 {
     auto r=QMessageBox::information(this,"提示","是否退出?",QMessageBox::Yes | QMessageBox::Cancel);
@@ -298,86 +382,7 @@ void Widget::on_tabWidget_currentChanged(int index)
 
 void Widget::on_select_tab_rec(int )
 {
-    auto dt=QDateTime::currentDateTime();
-    auto now=dt.toTime_t();
-    auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
-
-    //删除原来的线
-    for(const auto&s:chart_->series()){
-        chart_->removeSeries(s);
-    }
-    for(const auto &a:chart_->axes()){
-        chart_->removeAxis(a);
-    }
-
-    QPen pen;
-    {
-        pen.setStyle(Qt::SolidLine);
-        pen.setWidth(3);
-        pen.setColor(Qt::blue);
-    }
-    QPen pen_charge;
-    {
-        pen_charge.setStyle(Qt::SolidLine);
-        pen_charge.setWidth(3);
-        pen_charge.setColor(Qt::green);
-    }
-    //电量的折线
-    std::vector<QLineSeries*> lines;
-    int last_stat=-1;
-    for(auto it=recs.cbegin();it!=recs.cend();++it){
-        const auto& rec=*it;
-        int st=std::get<2>(rec);//0用电池,1充电
-        QLineSeries* line;
-        if(st==last_stat){
-            line=lines.back();
-        }else{
-            line = new QLineSeries();
-            //连接上一个点防止看起来断掉
-            if(it!=recs.cbegin()){
-                auto r=*(it-1);
-                line->append(std::get<0>(r)*1000,std::get<1>(r));
-            }
-            if(st==1){//充电
-                line->setPen(pen_charge);
-            }else{//用电
-                line->setPen(pen);
-            }
-            lines.emplace_back(line);
-        }
-        line->append(std::get<0>(rec)*1000,std::get<1>(rec));
-        last_stat=st;
-    }
-
-    for(auto &line:lines){
-        chart_->addSeries(line);
-    }
-
-    dt.addSecs(3600*-12).toString("HH:mm");
-
-    QDateTimeAxis *axisX = new  QDateTimeAxis;
-    {
-        axisX->setTickCount(9);
-        axisX->setRange(dt.addDays(-1),dt);
-        axisX->setFormat("HH:mm");
-    }
-    chart_->addAxis(axisX,Qt::AlignBottom);
-    for(auto &line:lines){
-        line->attachAxis(axisX);
-    }
-
-    QValueAxis *axisY = new QValueAxis;
-    {
-        axisY->setRange(0, 100);
-        axisY->setMin(0);
-        axisY->setMax(100);
-        axisY->setLabelFormat("%d");
-        axisY->setTickCount(11);//10格子
-    }
-    chart_->addAxis(axisY,Qt::AlignLeft);
-    for(auto &line:lines){
-        line->attachAxis(axisY);
-    }
+    update_chart();
 }
 
 //点击选择使用电池时的字体颜色
