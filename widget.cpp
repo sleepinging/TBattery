@@ -62,7 +62,7 @@ Widget::Widget(QWidget *parent) :
     init_bt_rec();
 
     timer_update_chart_=new QTimer();
-    timer_update_chart_->setInterval(1000*10);
+    timer_update_chart_->setInterval(1000*1);
     timer_update_chart_->start();
     connect(timer_update_chart_,&QTimer::timeout,this,&Widget::update_chart_need);
 }
@@ -190,6 +190,9 @@ void Widget::showmain()
     if(this->isMinimized()){
         this->showNormal();
     }
+    if(ui->tabWidget->currentIndex()==1){
+        update_chart();
+    }
 }
 
 void Widget::update_chart_need()
@@ -199,15 +202,15 @@ void Widget::update_chart_need()
     if(idx != 1){
         return;
     }
-    if(this->isMinimized()){
+    if(this->isMinimized()||this->isHidden()){
         return;
     }
-//    qDebug()<<"update chart";
     update_chart();
 }
 
 void Widget::update_chart()
 {
+//    qDebug()<<"update chart";
     auto dt=QDateTime::currentDateTime();
     auto now=static_cast<time_t>(dt.toTime_t());
     auto recs=BatteryRecord::GetInstance()->GetRecords(now-86400,now);
@@ -319,11 +322,9 @@ void Widget::onactivetray(QSystemTrayIcon::ActivationReason reason)
 {
     switch (reason)
     {
-    // 单击
-    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::Trigger:// 单击
         break;
-        // 双击
-    case QSystemTrayIcon::DoubleClick:
+    case QSystemTrayIcon::DoubleClick:// 双击
     {
         if(this->isHidden()){
             showmain();
