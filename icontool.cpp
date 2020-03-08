@@ -64,7 +64,11 @@ QIcon IconTool::genIcon(int num, bool charging)
     pen.setColor(fc);
     QFont font = painter.font();
     font.setBold(true);//加粗
-    font.setPixelSize(32);//改变字体大小
+    if(num>=100){
+        font.setPixelSize(20);//改变字体大小
+    }else{
+        font.setPixelSize(32);//改变字体大小
+    }
 
     painter.setPen(pen);
     painter.setFont(font);
