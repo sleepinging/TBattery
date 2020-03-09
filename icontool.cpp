@@ -65,13 +65,20 @@ QIcon IconTool::genIcon(int num, bool charging)
     QFont font = painter.font();
     font.setBold(true);//加粗
     if(num>=100){
-        font.setPixelSize(20);//改变字体大小
+        font.setPixelSize(16);//3个数字的大小
+    }else if(num>=10){
+        font.setPixelSize(20);
     }else{
-        font.setPixelSize(32);//改变字体大小
+        font.setPixelSize(32);
     }
+    pen.setWidth(2);
 
     painter.setPen(pen);
     painter.setFont(font);
+    painter.setRenderHint(QPainter::Antialiasing);//设置圆滑绘制风格（抗锯齿）
+    //画圆弧
+    painter.drawArc(1,1,30,30,90*16,((num+2)/3*3-2)*3.6*16);//左上角在0,0,a=30,b=30,角度=电量*360°
+    //画文字
     painter.drawText(image.rect(),Qt::AlignCenter,QString::number(num));
 
     static QPixmap qp;
