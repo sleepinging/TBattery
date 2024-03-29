@@ -1,4 +1,4 @@
-#include "icontool.h"
+﻿#include "icontool.h"
 
 #include <QPainter>
 #include <QString>

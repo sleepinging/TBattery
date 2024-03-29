@@ -1,4 +1,4 @@
-#include "batteryevent.h"
+﻿#include "batteryevent.h"
 
 #include <QString>
 #include <QtDebug>

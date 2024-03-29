@@ -1,4 +1,4 @@
-#include <QChart>
+﻿#include <QChart>
 using namespace QtCharts;
 
 #include "widget.h"
@@ -115,13 +115,13 @@ void Widget::showbtinfo()
     QString st;
     switch(Battery::status){
     case Battery::Status::UNCHARGING:
-        st="使用电池";
+        st=u8"使用电池";
         break;
     case Battery::Status::CHARGING:
-        st="正在充电";
+        st=u8"正在充电";
         break;
     case Battery::Status::UNKNOW:
-        st="未知";
+        st=u8"未知";
         break;
     }
     ui->lb_st->setText(st);
@@ -140,14 +140,18 @@ void Widget::inittray()
     auto act1 = new QAction(menu_);
     auto act2 = new QAction(menu_);
 
-    act1->setText("显示");
-    act2->setText("退出");
+    act1->setText(u8"显示");
+    act2->setText(u8"退出");
 
     menu_->addAction(act1);
     menu_->addAction(act2);
 
     connect(act1, &QAction::triggered, this, &Widget::showmain);
-    connect(act2, &QAction::triggered, this, &Widget::close);
+    connect(act2, &QAction::triggered, this, [this](auto){
+        close_by_tray_ = true;
+        close();
+        close_by_tray_ = false;
+    });
 
     sti_->setContextMenu(menu_);
 
@@ -179,7 +183,7 @@ void Widget::init_chart()
 {
     chart_ = new QtCharts::QChart();
     chart_->legend()->hide();  // 隐藏图例
-    chart_->setTitle("24小时的电量记录");  // 设置图表的标题
+    chart_->setTitle(u8"24小时的电量记录");  // 设置图表的标题
     ui->widget->setChart(chart_);
     ui->widget->setRenderHint(QPainter::Antialiasing);    //抗锯齿
 }
@@ -295,24 +299,23 @@ void Widget::update_chart()
 
 void Widget::closeEvent(QCloseEvent *e)
 {
-    auto r=QMessageBox::information(this,"提示","是否退出?",QMessageBox::Yes | QMessageBox::Cancel);
-    switch(r){
-    case QMessageBox::Yes:
-        e->accept();
-        break;
-    case QMessageBox::Cancel:
+    if(!close_by_tray_){
+        hide();
         e->ignore();
-        break;
-    default:
+
+    }else{
+        e->accept();
         QWidget::closeEvent(e);
     }
+    return;
 }
 
 void Widget::changeEvent(QEvent *event)
 {
     if(event->type()==QEvent::WindowStateChange){
         if(windowState() & Qt::WindowMinimized){
-            hide();
+            // 最小化不再隐藏
+            // hide();
         }
     }
     QWidget::changeEvent(event);

@@ -1,4 +1,4 @@
-#ifndef BATTERYEVENT_H
+﻿#ifndef BATTERYEVENT_H
 #define BATTERYEVENT_H
 
 #include <QObject>

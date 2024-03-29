@@ -1,4 +1,4 @@
-#include "battery.h"
+﻿#include "battery.h"
 
 #include <windows.h>
 

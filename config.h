@@ -1,4 +1,4 @@
-/*
+﻿/*
  * @Description: 配置文件读取
  * @Author: taowentao
  * @Date: 2019-01-14 13:45:22

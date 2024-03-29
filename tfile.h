@@ -1,4 +1,4 @@
-//文件读写类
+﻿//文件读写类
 
 #if !defined(__H__TFILE__H__)
 #define __H__TFILE__H__

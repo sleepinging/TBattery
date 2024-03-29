@@ -1,4 +1,4 @@
-#ifndef ICONTOOL_H
+﻿#ifndef ICONTOOL_H
 #define ICONTOOL_H
 
 #include <unordered_map>

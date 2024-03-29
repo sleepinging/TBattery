@@ -1,4 +1,4 @@
-#ifndef BATTERYRECORD_H
+﻿#ifndef BATTERYRECORD_H
 #define BATTERYRECORD_H
 
 #include <time.h>

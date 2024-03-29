@@ -1,4 +1,4 @@
-#ifndef WIDGET_H
+﻿#ifndef WIDGET_H
 #define WIDGET_H
 
 #include <QWidget>
@@ -102,6 +102,8 @@ private:
     QColorDialog* cld_f_c_=nullptr;
     //统计图
     QtCharts::QChart* chart_ =nullptr;
+
+    bool close_by_tray_{false};
 };
 
 #endif // WIDGET_H

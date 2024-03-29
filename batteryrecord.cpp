@@ -1,4 +1,4 @@
-#include "batteryrecord.h"
+﻿#include "batteryrecord.h"
 
 #include <QDebug>
 

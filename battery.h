@@ -1,4 +1,4 @@
-#if !defined(__H__BATTERY__H__)
+﻿#if !defined(__H__BATTERY__H__)
 #define __H__BATTERY__H__
 
 #include <QMutex>

@@ -1,4 +1,4 @@
-//字符串操作
+﻿//字符串操作
 
 #if !defined(__H__MYSTRING__H__)
 #define __H__MYSTRING__H__
